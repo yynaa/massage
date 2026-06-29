@@ -1,6 +1,7 @@
 # Massage
+*it hurts my back to look into so many **wires**, I'd well need a **massage**...*
 
-a simple command-like tailor-made message parser for a handful of languages
+a simple command-like tailor-made message library for a handful of languages
 
 ```toml
 # this Massage example shows a few simple messages you might want to send.
@@ -83,12 +84,6 @@ await generate_schema(schema);
 ```ts
 import { ... } from "@massage/<Name of your message>";
 ```
-
-## FAQ
-
-### Why "Massage"?
-
-It hurts my back to look into so many *wires*, I'd well need a *massage*...
 
 ## TODO
 
