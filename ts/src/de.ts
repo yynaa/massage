@@ -23,57 +23,58 @@ export function deserialize_command(
             case "U8":
               return [
                 `if (bytes.length < 1) return undefined`,
-                `const ${arg.name}Arg = bytes.splice(-1)[0] || 0`,
+                `const ${arg.name}Bytes = bytes.splice(-1)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getUint8(0, true)`,
               ];
             case "U16":
               return [
                 `if (bytes.length < 2) return undefined`,
-                `let ${arg.name}Bytes = bytes.splice(-2)`,
-                `let ${arg.name}Arg = 0`,
-                `for (let i = 0; i < 2; i++) { ${arg.name}Arg = (${arg.name}Arg << 8) | (${arg.name}Bytes[i] || 0) }`,
+                `const ${arg.name}Bytes = bytes.splice(-2)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getUint16(0, true)`,
               ];
             case "U32":
               return [
                 `if (bytes.length < 4) return undefined`,
-                `let ${arg.name}Bytes = bytes.splice(-4)`,
-                `let ${arg.name}Arg = 0`,
-                `for (let i = 0; i < 4; i++) { ${arg.name}Arg = (${arg.name}Arg << 8) | (${arg.name}Bytes[i] || 0) }`,
+                `const ${arg.name}Bytes = bytes.splice(-4)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getUint32(0, true)`,
               ];
             case "U64":
               return [
                 `if (bytes.length < 8) return undefined`,
-                `let ${arg.name}Bytes = bytes.splice(-8)`,
-                `let ${arg.name}Arg = 0n`,
-                `for (let i = 0; i < 8; i++) { ${arg.name}Arg = (${arg.name}Arg << 8n) | (BigInt(${arg.name}Bytes[i] || 0)) }`,
+                `const ${arg.name}Bytes = bytes.splice(-8)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getBigUint64(0, true)`,
               ];
             case "I8":
               return [
                 `if (bytes.length < 1) return undefined`,
-                `const ${arg.name}Arg = ((bytes.splice(-1)[0] || 0) << 24) >> 24`,
+                `const ${arg.name}Bytes = bytes.splice(-1)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getInt8(0, true)`,
               ];
             case "I16":
               return [
                 `if (bytes.length < 2) return undefined`,
-                `let ${arg.name}Bytes = bytes.splice(-2)`,
-                `let ${arg.name}Arg = 0`,
-                `for (let i = 0; i < 2; i++) { ${arg.name}Arg = (${arg.name}Arg << 8) | (${arg.name}Bytes[i] || 0) }`,
-                `${arg.name}Arg = (${arg.name}Arg << 16) >> 16`,
+                `const ${arg.name}Bytes = bytes.splice(-2)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getInt16(0, true)`,
               ];
             case "I32":
               return [
                 `if (bytes.length < 4) return undefined`,
-                `let ${arg.name}Bytes = bytes.splice(-4)`,
-                `let ${arg.name}Arg = 0`,
-                `for (let i = 0; i < 4; i++) { ${arg.name}Arg = (${arg.name}Arg << 8) | (${arg.name}Bytes[i] || 0) }`,
-                `${arg.name}Arg = ${arg.name}Arg | 0`,
+                `const ${arg.name}Bytes = bytes.splice(-4)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getInt32(0, true)`,
               ];
             case "I64":
               return [
                 `if (bytes.length < 8) return undefined`,
-                `let ${arg.name}Bytes = bytes.splice(-8)`,
-                `let ${arg.name}Arg = 0n`,
-                `for (let i = 0; i < 8; i++) { ${arg.name}Arg = (${arg.name}Arg << 8n) | (BigInt(${arg.name}Bytes[i] || 0)) }`,
-                `${arg.name}Arg = ${arg.name}Arg >= 0x8000000000000000n ? ${arg.name}Arg - 0x10000000000000000n : ${arg.name}Arg`,
+                `const ${arg.name}Bytes = bytes.splice(-8)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getBigInt64(0, true)`,
               ];
             case "F32":
               return [

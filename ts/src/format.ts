@@ -35,5 +35,18 @@ export type ArgumentFormat =
 export async function schema_from_path(path: string): Promise<Schema> {
   const string_data = await readFile(path, "utf8");
   const toml_data = parse(string_data) as Schema;
+
+  if (toml_data.commands === undefined) {
+    toml_data.commands = {};
+  }
+  for (const name of Object.keys(toml_data.commands)) {
+    if (
+      toml_data.commands[name] !== undefined &&
+      toml_data.commands[name].arguments === undefined
+    ) {
+      toml_data.commands[name].arguments = [];
+    }
+  }
+
   return toml_data;
 }

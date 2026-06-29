@@ -15,31 +15,60 @@ export function serialize_command(
         .map((arg) => {
           switch (arg.format) {
             case "U8":
+              return [
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
+                `${snakeCase(arg.name)}DataView.setUint8(0, this.${snakeCase(arg.name)}, false)`,
+                `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
+              ];
             case "I8":
               return [
-                `const ${snakeCase(arg.name)}Arg = [this.${snakeCase(arg.name)} & 0xFF]`,
-                `${snakeCase(arg.name)}Arg`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
+                `${snakeCase(arg.name)}DataView.setInt8(0, this.${snakeCase(arg.name)}, false)`,
+                `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "U16":
+              return [
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
+                `${snakeCase(arg.name)}DataView.setUint16(0, this.${snakeCase(arg.name)}, false)`,
+                `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
+              ];
             case "I16":
               return [
-                `const ${snakeCase(arg.name)}Arg = Array(2).fill(0)`,
-                `for (let i=0; i < 2; i++) { ${snakeCase(arg.name)}Arg[i] = (this.${snakeCase(arg.name)} >> (8*i)) & 0xFF }`,
-                `${snakeCase(arg.name)}Arg`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
+                `${snakeCase(arg.name)}DataView.setInt16(0, this.${snakeCase(arg.name)}, false)`,
+                `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "U32":
+              return [
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
+                `${snakeCase(arg.name)}DataView.setUint32(0, this.${snakeCase(arg.name)}, false)`,
+                `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
+              ];
             case "I32":
               return [
-                `const ${snakeCase(arg.name)}Arg = Array(4).fill(0)`,
-                `for (let i=0; i < 4; i++) { ${snakeCase(arg.name)}Arg[i] = (this.${snakeCase(arg.name)} >> (8*i)) & 0xFF }`,
-                `${snakeCase(arg.name)}Arg`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
+                `${snakeCase(arg.name)}DataView.setInt32(0, this.${snakeCase(arg.name)}, false)`,
+                `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "U64":
+              return [
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
+                `${snakeCase(arg.name)}DataView.setBigUint64(0, this.${snakeCase(arg.name)}, false)`,
+                `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
+              ];
             case "I64":
               return [
-                `const ${snakeCase(arg.name)}Arg = Array(8).fill(0)`,
-                `for (let i=0; i < 8; i++) { ${snakeCase(arg.name)}Arg[i] = Number(this.${snakeCase(arg.name)} >> (8n*BigInt(i))) & 0xFF }`,
-                `${snakeCase(arg.name)}Arg`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
+                `${snakeCase(arg.name)}DataView.setBigInt64(0, this.${snakeCase(arg.name)}, false)`,
+                `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "F32":
               return [

@@ -92,6 +92,6 @@ import { ... } from "@massage/<Name of your message>";
 - [ ] message prefixes
 - [ ] Lua support
 - [ ] testing
-  - [ ] Rust
+  - [x] Rust
   - [ ] TS
   - [ ] inter-language
