@@ -1,0 +1,13 @@
+{
+  "name": "massage-ts-example",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "massage": "file:../../ts",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

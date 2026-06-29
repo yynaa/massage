@@ -13,5 +13,29 @@ format = "U16"
 name = "b"
 
 [[commands.hello.arguments]]
-format = "String"
+format = "U32"
 name = "c"
+
+[[commands.hello.arguments]]
+format = "U64"
+name = "d"
+
+[[commands.hello.arguments]]
+format = "I8"
+name = "e"
+
+[[commands.hello.arguments]]
+format = "I16"
+name = "f"
+
+[[commands.hello.arguments]]
+format = "I32"
+name = "g"
+
+[[commands.hello.arguments]]
+format = "I64"
+name = "h"
+
+[[commands.hello.arguments]]
+format = "String"
+name = "i"
