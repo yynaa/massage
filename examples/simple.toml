@@ -1,0 +1,22 @@
+# this Massage example shows a few simple messages you might want to send.
+
+name = "simple" # this will be the name of your structures
+description = "a simple communication protocol"
+
+[commands.hello]
+id = 1 # unique command identifier
+description = "say hello!"
+
+[[commands.hello.arguments]]
+format = "U8" # may be string, u8, u16, u32, u64, i8, i16, i32, i64
+name = "name" # unique argument identifier
+description = "your name"
+
+[commands.goodbye]
+id = 2
+description = "say goodbye :("
+
+[[commands.goodbye.arguments]]
+format = "U8"
+name = "name"
+description = "your name"

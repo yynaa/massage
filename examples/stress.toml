@@ -1,0 +1,17 @@
+name = "stress"
+
+[commands.hello]
+id = 1
+description = "say hello!"
+
+[[commands.hello.arguments]]
+format = "U8"
+name = "a"
+
+[[commands.hello.arguments]]
+format = "U16"
+name = "b"
+
+[[commands.hello.arguments]]
+format = "String"
+name = "c"
