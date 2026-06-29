@@ -16,6 +16,7 @@ pub(crate) fn serialize_command(command: Command, ident_name: Ident) -> TokenStr
   let output = quote! {
     impl #ident_name {
       pub fn serialize(&self) -> Vec<u8> {
+        #[allow(unused_mut)]
         let mut r = vec![#command_id];
         #(r.append(&mut #argument_generators);)*
         r
@@ -31,13 +32,27 @@ fn serialize_argument(argument: Argument) -> TokenStream {
   let value_access = quote! {self.#var_name};
 
   match argument.format {
-    ArgumentFormat::U8 | ArgumentFormat::I8 => quote! {vec![#value_access]},
-    ArgumentFormat::U16
-    | ArgumentFormat::U32
-    | ArgumentFormat::U64
-    | ArgumentFormat::I16
-    | ArgumentFormat::I32
-    | ArgumentFormat::I64 => quote! {#value_access.to_be_bytes().to_vec()},
+    ArgumentFormat::U8 | ArgumentFormat::I8 => quote! {vec![#value_access as u8]},
+    // ArgumentFormat::U16
+    // | ArgumentFormat::U32
+    // | ArgumentFormat::U64
+    // | ArgumentFormat::I16
+    // | ArgumentFormat::I32
+    // | ArgumentFormat::I64
+    // | ArgumentFormat::F32
+    // | ArgumentFormat::F64 => quote! {#value_access.to_be_bytes().to_vec()},
+    ArgumentFormat::U16 | ArgumentFormat::I16 => {
+      quote! {(#value_access as u16).to_be_bytes().to_vec()}
+    }
+    ArgumentFormat::U32 | ArgumentFormat::I32 => {
+      quote! {(#value_access as u32).to_be_bytes().to_vec()}
+    }
+    ArgumentFormat::U64 | ArgumentFormat::I64 => {
+      quote! {(#value_access as u64).to_be_bytes().to_vec()}
+    }
+    ArgumentFormat::F32 | ArgumentFormat::F64 => {
+      quote! {#value_access.to_be_bytes().to_vec()}
+    }
     ArgumentFormat::String => quote! {{
       let mut v = vec![#value_access.len() as u8];
       v.extend(#value_access.clone().into_bytes());

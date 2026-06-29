@@ -34,7 +34,7 @@ fn generate_schema(schema: Schema) -> String {
 
     #description
     #[allow(unused)]
-    #[derive(Debug, Clone)]
+    #[derive(Debug, Clone, PartialEq)]
     pub struct #schema_name {
       pub command: #enum_name
     }
@@ -70,7 +70,7 @@ fn generate_schema(schema: Schema) -> String {
     .collect();
 
   total.extend(quote! {
-    #[derive(Debug, Clone)]
+    #[derive(Debug, Clone, PartialEq)]
     pub enum #enum_name {
       #(#command_names ( #command_names )),*
     }
@@ -78,7 +78,9 @@ fn generate_schema(schema: Schema) -> String {
     impl fmt::Display for #enum_name {
       fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-          #(Self::#command_names(inner) => write!(f, "{}", inner)),*
+          #(Self::#command_names(inner) => write!(f, "{}", inner),)*
+          #[allow(unreachable_patterns)]
+          _ => write!(f, "")
         }
       }
     }
@@ -86,7 +88,9 @@ fn generate_schema(schema: Schema) -> String {
     impl #enum_name {
       fn serialize(&self) -> Vec<u8> {
         match self {
-          #(Self::#command_names(inner) => inner.serialize()),*
+          #(Self::#command_names(inner) => inner.serialize(),)*
+          #[allow(unreachable_patterns)]
+          _ => Vec::new()
         }
       }
     }
@@ -149,17 +153,27 @@ fn generate_command(name: String, command: Command) -> TokenStream {
 
   let mut output = quote! {
     #description
-    #[derive(Debug, Clone)]
+    #[derive(Debug, Clone, PartialEq)]
     pub struct #ident_name {
       #(#arguments),*
     }
-
-    impl fmt::Display for #ident_name {
-      fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, #display_model, #(self.#display_arguments),*)
-      }
-    }
   };
+
+  if command.arguments.len() > 0 {
+    output.extend(quote! {impl fmt::Display for #ident_name {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+          write!(f, #display_model, #(self.#display_arguments),*)
+        }
+      }
+    });
+  } else {
+    output.extend(quote! {impl fmt::Display for #ident_name {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+          write!(f, #display_model)
+        }
+      }
+    });
+  }
 
   output.extend(serialize_command(command.clone(), ident_name.clone()));
   output.extend(deserialize_command(command, ident_name));
@@ -192,6 +206,8 @@ fn generate_argument_format(argument_format: ArgumentFormat) -> TokenStream {
     ArgumentFormat::I16 => quote! {i16},
     ArgumentFormat::I32 => quote! {i32},
     ArgumentFormat::I64 => quote! {i64},
+    ArgumentFormat::F32 => quote! {f32},
+    ArgumentFormat::F64 => quote! {f64},
   };
   output
 }

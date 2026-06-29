@@ -53,18 +53,29 @@ pub(crate) fn deserialize_command(command: Command, ident_name: Ident) -> TokenS
     })
     .collect::<Vec<_>>();
 
-  let output = quote! {
-    impl #ident_name {
-      pub fn deserialize(mut bytes: Vec<u8>) -> Option<Self> {
-        #(
-          let #argument_variables = {#argument_generators};
-        )*
-        if #(let Some(#argument_variables) = #argument_variables)&&* {
-          Some(Self {
-            #(#argument_names: #argument_variables),*
-          })
-        } else {
-          None
+  let output = if command.arguments.len() > 0 {
+    quote! {
+      impl #ident_name {
+
+        pub fn deserialize(#[allow(unused_mut)] mut bytes: Vec<u8>) -> Option<Self> {
+          #(
+            let #argument_variables = {#argument_generators};
+          )*
+          if #(let Some(#argument_variables) = #argument_variables)&&* {
+            Some(Self {
+              #(#argument_names: #argument_variables),*
+            })
+          } else {
+            None
+          }
+        }
+      }
+    }
+  } else {
+    quote! {
+      impl #ident_name {
+        pub fn deserialize(_bytes: Vec<u8>) -> Option<Self> {
+          Some(Self {})
         }
       }
     }
@@ -79,7 +90,7 @@ fn deserialize_argument(argument: Argument) -> TokenStream {
       bytes.pop()
     },
     ArgumentFormat::I8 => quote! {
-      bytes.pop() as i8
+      bytes.pop().map(|u| u as i8)
     },
     ArgumentFormat::U16 => quote! {
       let len = bytes.len();
@@ -131,6 +142,24 @@ fn deserialize_argument(argument: Argument) -> TokenStream {
       if len >= 8 {
         let b = bytes.split_off(len-8);
         Some(i64::from_le_bytes(b.try_into().unwrap()))
+      } else {
+        None
+      }
+    },
+    ArgumentFormat::F32 => quote! {
+      let len = bytes.len();
+      if len >= 4 {
+        let b = bytes.split_off(len-4);
+        Some(f32::from_le_bytes(b.try_into().unwrap()))
+      } else {
+        None
+      }
+    },
+    ArgumentFormat::F64 => quote! {
+      let len = bytes.len();
+      if len >= 8 {
+        let b = bytes.split_off(len-8);
+        Some(f64::from_le_bytes(b.try_into().unwrap()))
       } else {
         None
       }

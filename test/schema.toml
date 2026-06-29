@@ -1,0 +1,81 @@
+name = "test"
+
+[commands.empty]
+id = 0
+
+[commands.U8]
+id = 1
+
+[[commands.U8.arguments]]
+name = "value"
+format = "U8"
+
+[commands.U16]
+id = 2
+
+[[commands.U16.arguments]]
+name = "value"
+format = "U16"
+
+[commands.U32]
+id = 3
+
+[[commands.U32.arguments]]
+name = "value"
+format = "U32"
+
+[commands.U64]
+id = 4
+
+[[commands.U64.arguments]]
+name = "value"
+format = "U64"
+
+[commands.I8]
+id = 5
+
+[[commands.I8.arguments]]
+name = "value"
+format = "I8"
+
+[commands.I16]
+id = 6
+
+[[commands.I16.arguments]]
+name = "value"
+format = "I16"
+
+[commands.I32]
+id = 7
+
+[[commands.I32.arguments]]
+name = "value"
+format = "I32"
+
+[commands.I64]
+id = 8
+
+[[commands.I64.arguments]]
+name = "value"
+format = "I64"
+
+[commands.Str]
+id = 9
+
+[[commands.Str.arguments]]
+name = "value"
+format = "String"
+
+[commands.F32]
+id = 10
+
+[[commands.F32.arguments]]
+name = "value"
+format = "F32"
+
+[commands.F64]
+id = 11
+
+[[commands.F64.arguments]]
+name = "value"
+format = "F64"

@@ -123,6 +123,8 @@ function parse_argument_format(format: ArgumentFormat): string {
     case "I8":
     case "I16":
     case "I32":
+    case "F32":
+    case "F64":
       return "number";
     case "U64":
     case "I64":

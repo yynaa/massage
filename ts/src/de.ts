@@ -75,6 +75,20 @@ export function deserialize_command(
                 `for (let i = 0; i < 8; i++) { ${arg.name}Arg = (${arg.name}Arg << 8n) | (BigInt(${arg.name}Bytes[i] || 0)) }`,
                 `${arg.name}Arg = ${arg.name}Arg >= 0x8000000000000000n ? ${arg.name}Arg - 0x10000000000000000n : ${arg.name}Arg`,
               ];
+            case "F32":
+              return [
+                `if (bytes.length < 4) return undefined`,
+                `const ${arg.name}Bytes = bytes.splice(-4)`,
+                `const dv = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = dv.getFloat32(0, true)`,
+              ];
+            case "F64":
+              return [
+                `if (bytes.length < 8) return undefined`,
+                `const ${arg.name}Bytes = bytes.splice(-8)`,
+                `const ${arg.name}DataView = new DataView(new Uint8Array(${arg.name}Bytes).buffer)`,
+                `const ${arg.name}Arg = ${arg.name}DataView.getFloat64(0, true)`,
+              ];
             case "String":
               return [
                 `if (bytes.length < 1) return undefined`,

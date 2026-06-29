@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 pub struct Schema {
   pub name: String,
   pub description: Option<String>,
+  #[serde(default)]
   pub commands: HashMap<String, Command>,
 }
 
@@ -13,6 +14,7 @@ pub struct Schema {
 pub struct Command {
   pub id: u8,
   pub description: Option<String>,
+  #[serde(default)]
   pub arguments: Vec<Argument>,
 }
 
@@ -34,6 +36,8 @@ pub enum ArgumentFormat {
   I16,
   I32,
   I64,
+  F32,
+  F64,
 }
 
 impl Schema {
