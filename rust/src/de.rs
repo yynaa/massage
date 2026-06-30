@@ -1,24 +1,45 @@
-use heck::{ToPascalCase, ToSnakeCase};
+use heck::ToSnakeCase;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Ident;
 
 use crate::format::{Argument, ArgumentFormat, Command, Schema};
 
-pub(crate) fn deserialize_enum(schema: Schema, ident_name: Ident) -> TokenStream {
-  let command_names: Vec<Ident> = schema
-    .commands
-    .iter()
-    .map(|(n, _)| Ident::new(&n.to_pascal_case(), Span::call_site()))
-    .collect();
+pub(crate) fn deserialize_message(
+  _schema: Schema,
+  ident_name: Ident,
+  enum_name: Ident,
+) -> TokenStream {
+  let output = quote! {
+    impl #ident_name {
+      pub fn deserialize(mut bytes: Vec<u8>) -> Option<Self> {
+        bytes.reverse();
 
+        if let Some(d) = #enum_name::deserialize(bytes) {
+          Some(Self {
+            command: d
+          })
+        } else {
+          None
+        }
+      }
+    }
+  };
+
+  output
+}
+
+pub(crate) fn deserialize_enum(
+  schema: Schema,
+  ident_name: Ident,
+  command_names: Vec<Ident>,
+) -> TokenStream {
   let command_ids: Vec<u8> = schema.commands.iter().map(|f| f.1.id).collect();
 
   let output = quote! {
     impl #ident_name {
       pub fn deserialize(mut bytes: Vec<u8>) -> Option<Self> {
         if bytes.len() == 0 {return None;}
-        bytes.reverse();
         let command_id = bytes.pop().unwrap();
         match command_id {
           #(#command_ids => #command_names::deserialize(bytes).map(|a| Self::#command_names(a)),)*
@@ -31,17 +52,16 @@ pub(crate) fn deserialize_enum(schema: Schema, ident_name: Ident) -> TokenStream
   output
 }
 
-pub(crate) fn deserialize_command(command: Command, ident_name: Ident) -> TokenStream {
+pub(crate) fn deserialize_command(
+  command: Command,
+  ident_name: Ident,
+  argument_names: Vec<Ident>,
+) -> TokenStream {
   let argument_generators: Vec<TokenStream> = command
     .arguments
     .iter()
     .map(|f| deserialize_argument(f.clone()))
     .collect();
-  let argument_names = command
-    .arguments
-    .iter()
-    .map(|f| Ident::new(&format!("{}", f.name.to_snake_case()), Span::call_site()))
-    .collect::<Vec<_>>();
   let argument_variables = command
     .arguments
     .iter()

@@ -3,7 +3,35 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Ident;
 
-use crate::format::{Argument, ArgumentFormat, Command};
+use crate::format::{Argument, ArgumentFormat, Command, Schema};
+
+pub(crate) fn serialize_message(_schema: Schema, ident_name: Ident) -> TokenStream {
+  quote! {
+    impl #ident_name {
+      pub fn serialize(&self) -> Vec<u8> {
+        self.command.serialize()
+      }
+    }
+  }
+}
+
+pub(crate) fn serialize_enum(
+  _schema: Schema,
+  ident_name: Ident,
+  command_names: Vec<Ident>,
+) -> TokenStream {
+  quote! {
+    impl #ident_name {
+      fn serialize(&self) -> Vec<u8> {
+        match self {
+          #(Self::#command_names(inner) => inner.serialize(),)*
+          #[allow(unreachable_patterns)]
+          _ => Vec::new()
+        }
+      }
+    }
+  }
+}
 
 pub(crate) fn serialize_command(command: Command, ident_name: Ident) -> TokenStream {
   let command_id = command.id;

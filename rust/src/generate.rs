@@ -5,9 +5,9 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 
 use crate::{
-  de::{deserialize_command, deserialize_enum},
+  de::{deserialize_command, deserialize_enum, deserialize_message},
   format::{Argument, ArgumentFormat, Command, Schema},
-  ser::serialize_command,
+  ser::{serialize_command, serialize_enum, serialize_message},
 };
 
 pub fn build_schema(schema: Schema) {
@@ -44,23 +44,14 @@ fn generate_schema(schema: Schema) -> String {
         write!(f, "{}", self.command)
       }
     }
-
-    impl #schema_name {
-      pub fn serialize(&self) -> Vec<u8> {
-        self.command.serialize()
-      }
-
-      pub fn deserialize(bytes: Vec<u8>) -> Option<Self> {
-        if let Some(d) = #enum_name::deserialize(bytes) {
-          Some(Self {
-            command: d
-          })
-        } else {
-          None
-        }
-      }
-    }
   };
+
+  total.extend(serialize_message(schema.clone(), schema_name.clone()));
+  total.extend(deserialize_message(
+    schema.clone(),
+    schema_name.clone(),
+    enum_name.clone(),
+  ));
 
   // command enum
   let command_names: Vec<Ident> = schema
@@ -84,19 +75,18 @@ fn generate_schema(schema: Schema) -> String {
         }
       }
     }
-
-    impl #enum_name {
-      fn serialize(&self) -> Vec<u8> {
-        match self {
-          #(Self::#command_names(inner) => inner.serialize(),)*
-          #[allow(unreachable_patterns)]
-          _ => Vec::new()
-        }
-      }
-    }
   });
 
-  total.extend(deserialize_enum(schema.clone(), enum_name.clone()));
+  total.extend(serialize_enum(
+    schema.clone(),
+    enum_name.clone(),
+    command_names.clone(),
+  ));
+  total.extend(deserialize_enum(
+    schema.clone(),
+    enum_name.clone(),
+    command_names.clone(),
+  ));
 
   // commands
   let commands: Vec<TokenStream> = schema
@@ -145,10 +135,10 @@ fn generate_command(name: String, command: Command) -> TokenStream {
       .collect::<Vec<_>>()
       .join(","),
   );
-  let display_arguments = command
+  let argument_names = command
     .arguments
     .iter()
-    .map(|f| Ident::new(&format!("{}", f.name.to_snake_case()), Span::call_site()))
+    .map(|f| Ident::new(&f.name.to_snake_case(), Span::call_site()))
     .collect::<Vec<_>>();
 
   let mut output = quote! {
@@ -162,7 +152,7 @@ fn generate_command(name: String, command: Command) -> TokenStream {
   if command.arguments.len() > 0 {
     output.extend(quote! {impl fmt::Display for #ident_name {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-          write!(f, #display_model, #(self.#display_arguments),*)
+          write!(f, #display_model, #(self.#argument_names),*)
         }
       }
     });
@@ -176,7 +166,7 @@ fn generate_command(name: String, command: Command) -> TokenStream {
   }
 
   output.extend(serialize_command(command.clone(), ident_name.clone()));
-  output.extend(deserialize_command(command, ident_name));
+  output.extend(deserialize_command(command, ident_name, argument_names));
 
   output
 }
