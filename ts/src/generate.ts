@@ -1,19 +1,22 @@
 import { Project, ScriptTarget, SourceFile } from "ts-morph";
-import { copyFileSync } from "fs";
+import { copyFileSync, existsSync } from "fs";
 
 import type { ArgumentFormat, Command, Schema } from "./format";
 import { pascalCase, snakeCase } from "change-case";
 import { serialize_command } from "./ser";
 import { deserialize_command } from "./de";
 
-export async function generate_schema(schema: Schema) {
+export async function generate_schema(
+  schema: Schema,
+  folder: string = "./.generated",
+) {
   const project = new Project({
     compilerOptions: {
       target: ScriptTarget.ES2015,
     },
   });
   const sourceFile = project.createSourceFile(
-    `./.generated/${pascalCase(schema.name)}.ts`,
+    `${folder}/${pascalCase(schema.name)}.ts`,
     undefined,
     { overwrite: true },
   );
@@ -83,7 +86,14 @@ export async function generate_schema(schema: Schema) {
 
   await sourceFile.save();
 
-  copyFileSync("src/_primitives.ts", ".generated/_primitives.ts");
+  if (existsSync("node_modules/massage/src/_primitives.ts")) {
+    copyFileSync(
+      "node_modules/massage/src/_primitives.ts",
+      `${folder}/_primitives.ts`,
+    );
+  } else if (existsSync("src/_primitives.ts")) {
+    copyFileSync("src/_primitives.ts", `${folder}/_primitives.ts`);
+  }
 }
 
 export function generate_command(

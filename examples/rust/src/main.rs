@@ -1,19 +1,30 @@
-use crate::simple::{Hello, Simple};
+#![allow(irrefutable_let_patterns)]
 
-pub mod simple {
+use crate::simple::{Hello, Simple, SimpleCommands};
+
+// include your message to your crate
+mod simple {
   include!(concat!(env!("OUT_DIR"), "/simple.rs"));
 }
 
 fn main() {
-  let message: Simple = Hello {
+  // create a new message
+  let mut message: Simple = Hello {
     name: "Sophie".into(),
   }
   .into();
-  println!("{}", message);
+  println!("message: {}", message);
 
+  // edit your message
+  if let SimpleCommands::Hello(hello) = &mut message.command {
+    hello.name = "Not Sophie".into();
+  }
+
+  // serialize your message
   let ser = message.serialize();
   println!("serialized: {:?}", ser);
 
+  // deserialize your message
   let de = Simple::deserialize(ser).unwrap();
   println!("deserialized: {}", de);
 }

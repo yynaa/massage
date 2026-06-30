@@ -1,11 +1,20 @@
+// import your message
 import { Hello, Simple } from "@massage/Simple";
 
-const c = new Hello("Sophie");
-const s = new Simple(c);
-console.log(s);
+// create your message
+const message = new Simple(new Hello("Sophie"));
+console.log("message:");
+console.log(message);
 
-const ser = s.serialize();
+// edit your message
+(message.command as Hello).name = "Not Sophie";
+
+// serialize your message
+const ser = message.serialize();
+console.log("serialized:");
 console.log(ser);
 
+// deserialize your message
 const de = Simple.deserialize(ser);
+console.log("deserialized:");
 console.log(de);

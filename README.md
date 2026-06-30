@@ -1,8 +1,9 @@
 # Massage
 *it hurts my back to look into so many **wires**, I'd well need a **massage**...*
 
-a simple command-like tailor-made message library for a handful of languages
+**a simple command-like tailor-made message library for a handful of languages**
 
+write a schema...
 ```toml
 # this Massage example shows a few simple messages you might want to send.
 
@@ -14,61 +15,112 @@ id = 1 # unique command identifier
 description = "say hello!"
 
 [[commands.hello.arguments]]
-format = "U8" # may be string, u8, u16, u32, u64, i8, i16, i32, i64
+format = "String" # may be String, U8, U16, U32, U64, I8, I16, I32, I64, F32, F64
 name = "name" # unique argument identifier
 description = "your name"
 
 [commands.goodbye]
 id = 2
-description = "say goodbye :("
+description = "say goodbye..."
+```
 
-[[commands.goodbye.arguments]]
-format = "U8"
-name = "name"
-description = "your name"
+...and now, for your language of choice, build and import your messages:
+```rs
+let mut message: Simple = Hello {
+  name: "Sophie".into(),
+}
+.into()
+```
+```ts
+const message = new Simple(new Hello("Sophie"));
+```
+```lua
+local message = Simple.Hello.new("Sophie"):_wrap()
 ```
 
 ## Rationale 
 
+- easy communication between languages by any networking means possible, as long as it can send bytes
 - no runtime dependencies, only generated files to ensure maximum compatibility in embedded systems
 - minimum build dependencies, for the same reason as above
 - language L generates code for language L, don't make existing stacks more complex
 - MIDI-like messages
 - no schema version control (who needs that?)
 
+## Features table
+
+| **feature** | **Rust** | **TS** | **LuaJIT + LuaCATS** |
+|---:|:---:|:---:|:---:|
+| building message definitions | ✅ | ✅ | ✅ |
+| post-build instant availability | ✅<br>through build.rs | ❌<br>requires a build script | ✅<br>through require() |
+| building for external crate | ✅ | ✅ | ✅ |
+| manipulating messages | ✅ | ✅ | ✅ |
+| ser/de | ✅ | ✅ | ✅ |
+| ser/de of large integer types<br>(u64 and i64) | ✅ | ✅ | ❌<br>Lua only has f64 |
 
 ## Rust
 
 ```rs
 // build.rs
 fn main() {
-  let schema = massage::format::Schema::from_path("<path to .toml>").unwrap();
+  // generate your schema
+  let schema = Schema::from_path("../simple.toml").unwrap();
+  // build it, it will appear in the crate's OUT_DIR
   massage::generate::build_schema(schema);
 }
 ```
 ```rs
-// main.rs
-pub mod simple {
-  include!(concat!(env!("OUT_DIR"), "/<name of your message>.rs"));
+// include your message to your crate
+mod simple {
+  include!(concat!(env!("OUT_DIR"), "/simple.rs"));
+}
+
+fn main() {
+  // create a new message
+  let mut message: Simple = Hello {
+    name: "Sophie".into(),
+  }
+  .into();
+
+  // edit your message
+  if let SimpleCommands::Hello(hello) = &mut message.command {
+    hello.name = "Not Sophie".into();
+  }
+
+  // serialize your message
+  let ser = message.serialize();
+
+  // deserialize your message
+  let de = Simple::deserialize(ser).unwrap();
 }
 ```
 
-You can run the example with:
-```sh
-cargo run
-```
+### Implementations
+
+your messages all implement:
+- Debug
+- Display
+- Clone
+- PartialEq
+
+your messages **DO NOT** implement:
+- Eq
+  - Massage supports f32 & f64, which aren't Eq.
+  - messages weren't made to be compared directly, and are more so meant to be matched.
 
 ## TS
 
 ```ts
-// build.ts -- or wherever you build your app or might run setup scripts
+// build.ts -- or wherever you build your app or wherever you might run setup scripts
 import { schema_from_path, generate_schema } from "massage";
 
-let schema = await schema_from_path("<path to .toml>");
-await generate_schema(schema);
+// generate the schema
+let schema = await schema_from_path("../simple.toml");
+// build it
+await generate_schema(schema, "./.generated");
 ```
+In `tsconfig.json`:
 ```json
-// tsconfig.json
 {
   "compilerOptions": {
     "baseUrl": ".",
@@ -79,10 +131,23 @@ await generate_schema(schema);
 }
 ```
 ```ts
-import { ... } from "@massage/<Name of your message>";
+// import your message
+import { Hello, Simple } from "@massage/Simple";
+
+// create your message
+const message = new Simple(new Hello("Sophie"));
+
+// edit your message
+(message.command as Hello).name = "Not Sophie";
+
+// serialize your message
+const ser = message.serialize();
+
+// deserialize your message
+const de = Simple.deserialize(ser);
 ```
 
-## Lua (LuaJIT & LuaCATS)
+## LuaJIT & LuaCATS
 
 > [!IMPORTANT]
 > Lua has no 64-bit integer type, so u64 and i64 will:
@@ -102,8 +167,6 @@ local Simple = require("generated.simple")
 
 -- create a new message
 local message = Simple.Hello.new("Sophie"):_wrap()
-print("message:")
-print(inspect(message))
 
 -- edit your message
 message.command.name = "Not Sophie"
@@ -127,13 +190,11 @@ make bundle_lua
 ```
 a folder will be created at `lua/dist/` containing the bundled library & runtime library.
 
-## Technicals/how it works
+## Technicals/How it works
 
-todo!()
+Massage will generate one file per message. it contains:
+- definitions and types
+- serialization functions
+- deserialization functions
 
-## TODO
-
-- [x] make a proper primitives lib for Rust
-- [ ] make a proper primitives lib for TS
-- [ ] tests for Lua
-- [ ] attempt support for u64/i64/f64 in Lua
+it will also package another file, often imported by name `_primitives`, which contains ser/des for all argument formats.

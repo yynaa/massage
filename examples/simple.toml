@@ -8,6 +8,10 @@ id = 1 # unique command identifier
 description = "say hello!"
 
 [[commands.hello.arguments]]
-format = "String" # may be string, u8, u16, u32, u64, i8, i16, i32, i64
+format = "String" # may be String, U8, U16, U32, U64, I8, I16, I32, I64, F32, F64
 name = "name" # unique argument identifier
 description = "your name"
+
+[commands.goodbye]
+id = 2
+description = "say goodbye..."
