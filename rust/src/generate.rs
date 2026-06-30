@@ -16,6 +16,11 @@ pub fn build_schema(schema: Schema) {
   let out =
     Path::new(&env::var("OUT_DIR").unwrap()).join(&format!("{}.rs", schema.name.to_snake_case()));
   fs::write(out, schema_code).unwrap();
+
+  let primitives_code = include_str!("_primitives.rs");
+
+  let out = Path::new(&env::var("OUT_DIR").unwrap()).join("_primitives.rs");
+  fs::write(out, primitives_code).unwrap();
 }
 
 fn generate_schema(schema: Schema) -> String {
@@ -30,6 +35,10 @@ fn generate_schema(schema: Schema) -> String {
     Span::call_site(),
   );
   let mut total = quote! {
+    mod primitives {
+      include!("_primitives.rs");
+    }
+
     use std::fmt;
 
     #description
@@ -165,7 +174,11 @@ fn generate_command(name: String, command: Command) -> TokenStream {
     });
   }
 
-  output.extend(serialize_command(command.clone(), ident_name.clone()));
+  output.extend(serialize_command(
+    command.clone(),
+    ident_name.clone(),
+    argument_names.clone(),
+  ));
   output.extend(deserialize_command(command, ident_name, argument_names));
 
   output

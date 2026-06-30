@@ -131,7 +131,7 @@ a folder will be created at `lua/dist/` containing the bundled library & runtime
 
 ## TODO
 
-- [ ] make a proper primitives lib for Rust
+- [x] make a proper primitives lib for Rust
 - [ ] make a proper primitives lib for TS
 - [ ] tests for Lua
 - [ ] attempt support for u64/i64/f64 in Lua

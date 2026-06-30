@@ -3,7 +3,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Ident;
 
-use crate::format::{Argument, ArgumentFormat, Command, Schema};
+use crate::format::{ArgumentFormat, Command, Schema};
 
 pub(crate) fn deserialize_message(
   _schema: Schema,
@@ -12,9 +12,7 @@ pub(crate) fn deserialize_message(
 ) -> TokenStream {
   let output = quote! {
     impl #ident_name {
-      pub fn deserialize(mut bytes: Vec<u8>) -> Option<Self> {
-        bytes.reverse();
-
+      pub fn deserialize(bytes: Vec<u8>) -> Option<Self> {
         if let Some(d) = #enum_name::deserialize(bytes) {
           Some(Self {
             command: d
@@ -40,7 +38,7 @@ pub(crate) fn deserialize_enum(
     impl #ident_name {
       pub fn deserialize(mut bytes: Vec<u8>) -> Option<Self> {
         if bytes.len() == 0 {return None;}
-        let command_id = bytes.pop().unwrap();
+        let command_id = bytes.remove(0);
         match command_id {
           #(#command_ids => #command_names::deserialize(bytes).map(|a| Self::#command_names(a)),)*
           _ => None
@@ -57,11 +55,16 @@ pub(crate) fn deserialize_command(
   ident_name: Ident,
   argument_names: Vec<Ident>,
 ) -> TokenStream {
-  let argument_generators: Vec<TokenStream> = command
+  let argument_variables_length = command
     .arguments
     .iter()
-    .map(|f| deserialize_argument(f.clone()))
-    .collect();
+    .map(|f| {
+      Ident::new(
+        &format!("length_{}", f.name.to_snake_case()),
+        Span::call_site(),
+      )
+    })
+    .collect::<Vec<_>>();
   let argument_variables = command
     .arguments
     .iter()
@@ -73,15 +76,41 @@ pub(crate) fn deserialize_command(
     })
     .collect::<Vec<_>>();
 
+  let argument_format_functions: Vec<Ident> = command
+    .arguments
+    .iter()
+    .map(|f| {
+      Ident::new(
+        &format!("de_{:?}", f.format).to_snake_case(),
+        Span::call_site(),
+      )
+    })
+    .collect();
+
+  let argument_length_generators = command
+    .arguments
+    .iter()
+    .map(|f| argument_length_from_format(f.format.clone()))
+    .collect::<Vec<_>>();
+
   let output = if command.arguments.len() > 0 {
     quote! {
       impl #ident_name {
-
-        pub fn deserialize(#[allow(unused_mut)] mut bytes: Vec<u8>) -> Option<Self> {
+        pub fn deserialize(bytes: Vec<u8>) -> Option<Self> {
+          let mut rpos = Some(0);
           #(
-            let #argument_variables = {#argument_generators};
+            let #argument_variables_length = #argument_length_generators;
+            let #argument_variables = if let Some(pos) = &mut rpos && let Some(length) = #argument_variables_length && *pos + length <= bytes.len() {
+
+              let r = primitives::#argument_format_functions(bytes[*pos..(*pos+length)].to_vec());
+              *pos += length;
+              r
+            } else {
+              rpos = None;
+              None
+            };
           )*
-          if #(let Some(#argument_variables) = #argument_variables)&&* {
+          if rpos.is_some() && #(let Some(#argument_variables) = #argument_variables)&&* {
             Some(Self {
               #(#argument_names: #argument_variables),*
             })
@@ -104,116 +133,18 @@ pub(crate) fn deserialize_command(
   output
 }
 
-fn deserialize_argument(argument: Argument) -> TokenStream {
-  match argument.format {
-    ArgumentFormat::U8 => quote! {
-      bytes.pop()
-    },
-    ArgumentFormat::I8 => quote! {
-      bytes.pop().map(|u| u as i8)
-    },
-    ArgumentFormat::U16 => quote! {
-      let len = bytes.len();
-      if len >= 2 {
-        let b = bytes.split_off(len-2);
-        Some(u16::from_le_bytes(b.try_into().unwrap()))
+fn argument_length_from_format(format: ArgumentFormat) -> TokenStream {
+  match format {
+    ArgumentFormat::U8 | ArgumentFormat::I8 => quote! {Some(1)},
+    ArgumentFormat::U16 | ArgumentFormat::I16 => quote! {Some(2)},
+    ArgumentFormat::U32 | ArgumentFormat::I32 | ArgumentFormat::F32 => quote! {Some(4)},
+    ArgumentFormat::U64 | ArgumentFormat::I64 | ArgumentFormat::F64 => quote! {Some(8)},
+    ArgumentFormat::String => quote! {{
+      if let Some(pos) = rpos {
+        bytes[pos..].iter().position(|&x| x == 0)
       } else {
         None
       }
-    },
-    ArgumentFormat::I16 => quote! {
-      let len = bytes.len();
-      if len >= 2 {
-        let b = bytes.split_off(len-2);
-        Some(i16::from_le_bytes(b.try_into().unwrap()))
-      } else {
-        None
-      }
-    },
-    ArgumentFormat::U32 => quote! {
-      let len = bytes.len();
-      if len >= 4 {
-        let b = bytes.split_off(len-4);
-        Some(u32::from_le_bytes(b.try_into().unwrap()))
-      } else {
-        None
-      }
-    },
-    ArgumentFormat::I32 => quote! {
-      let len = bytes.len();
-      if len >= 4 {
-        let b = bytes.split_off(len-4);
-        Some(i32::from_le_bytes(b.try_into().unwrap()))
-      } else {
-        None
-      }
-    },
-    ArgumentFormat::U64 => quote! {
-      let len = bytes.len();
-      if len >= 8 {
-        let b = bytes.split_off(len-8);
-        Some(u64::from_le_bytes(b.try_into().unwrap()))
-      } else {
-        None
-      }
-    },
-    ArgumentFormat::I64 => quote! {
-      let len = bytes.len();
-      if len >= 8 {
-        let b = bytes.split_off(len-8);
-        Some(i64::from_le_bytes(b.try_into().unwrap()))
-      } else {
-        None
-      }
-    },
-    ArgumentFormat::F32 => quote! {
-      let len = bytes.len();
-      if len >= 4 {
-        let b = bytes.split_off(len-4);
-        Some(f32::from_le_bytes(b.try_into().unwrap()))
-      } else {
-        None
-      }
-    },
-    ArgumentFormat::F64 => quote! {
-      let len = bytes.len();
-      if len >= 8 {
-        let b = bytes.split_off(len-8);
-        Some(f64::from_le_bytes(b.try_into().unwrap()))
-      } else {
-        None
-      }
-    },
-    ArgumentFormat::String => quote! {
-      // if let Some(str_len) = bytes.pop() {
-      //   let len = bytes.len();
-      //   if len >= str_len as usize {
-      //     let mut b = bytes.split_off(len-str_len as usize);
-      //     b.reverse();
-      //     if let Ok(string) = String::from_utf8(b) {
-      //       Some(string)
-      //     } else {
-      //       None
-      //     }
-      //   } else {
-      //     None
-      //   }
-      // } else {
-      //   None
-      // }
-      let mut result = None;
-      let mut res_bytes = vec![];
-      while let Some(str_byte) = bytes.pop() {
-        if str_byte == 0 {
-          if let Ok(string) = String::from_utf8(res_bytes) {
-            result = Some(string);
-          }
-          break;
-        } else {
-          res_bytes.push(str_byte);
-        }
-      }
-      result
-    },
+    }},
   }
 }

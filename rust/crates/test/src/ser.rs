@@ -18,8 +18,8 @@ fn serialize_u8() {
 fn serialize_u16() {
   let m: schema::Test = schema::U16 { value: 0x1234 }.into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x12);
-  assert!(ser[2] == 0x34);
+  assert!(ser[1] == 0x34);
+  assert!(ser[2] == 0x12);
   assert!(ser.len() == 3)
 }
 
@@ -27,10 +27,10 @@ fn serialize_u16() {
 fn serialize_u32() {
   let m: schema::Test = schema::U32 { value: 0x12345678 }.into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x12);
-  assert!(ser[2] == 0x34);
-  assert!(ser[3] == 0x56);
-  assert!(ser[4] == 0x78);
+  assert!(ser[1] == 0x78);
+  assert!(ser[2] == 0x56);
+  assert!(ser[3] == 0x34);
+  assert!(ser[4] == 0x12);
   assert!(ser.len() == 5)
 }
 
@@ -41,14 +41,14 @@ fn serialize_u64() {
   }
   .into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x12);
-  assert!(ser[2] == 0x34);
-  assert!(ser[3] == 0x56);
-  assert!(ser[4] == 0x78);
-  assert!(ser[5] == 0x9a);
-  assert!(ser[6] == 0xbc);
-  assert!(ser[7] == 0xde);
-  assert!(ser[8] == 0xf0);
+  assert!(ser[1] == 0xf0);
+  assert!(ser[2] == 0xde);
+  assert!(ser[3] == 0xbc);
+  assert!(ser[4] == 0x9a);
+  assert!(ser[5] == 0x78);
+  assert!(ser[6] == 0x56);
+  assert!(ser[7] == 0x34);
+  assert!(ser[8] == 0x12);
   assert!(ser.len() == 9)
 }
 
@@ -64,8 +64,8 @@ fn serialize_i8() {
 fn serialize_i16() {
   let m: schema::Test = schema::I16 { value: 0x1234 }.into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x12);
-  assert!(ser[2] == 0x34);
+  assert!(ser[1] == 0x34);
+  assert!(ser[2] == 0x12);
   assert!(ser.len() == 3)
 }
 
@@ -73,10 +73,10 @@ fn serialize_i16() {
 fn serialize_i32() {
   let m: schema::Test = schema::I32 { value: 0x12345678 }.into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x12);
-  assert!(ser[2] == 0x34);
-  assert!(ser[3] == 0x56);
-  assert!(ser[4] == 0x78);
+  assert!(ser[1] == 0x78);
+  assert!(ser[2] == 0x56);
+  assert!(ser[3] == 0x34);
+  assert!(ser[4] == 0x12);
   assert!(ser.len() == 5)
 }
 
@@ -87,14 +87,14 @@ fn serialize_i64() {
   }
   .into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x12);
-  assert!(ser[2] == 0x34);
-  assert!(ser[3] == 0x56);
-  assert!(ser[4] == 0x78);
-  assert!(ser[5] == 0x9a);
-  assert!(ser[6] == 0xbc);
-  assert!(ser[7] == 0xde);
-  assert!(ser[8] == 0xf0);
+  assert!(ser[1] == 0xf0);
+  assert!(ser[2] == 0xde);
+  assert!(ser[3] == 0xbc);
+  assert!(ser[4] == 0x9a);
+  assert!(ser[5] == 0x78);
+  assert!(ser[6] == 0x56);
+  assert!(ser[7] == 0x34);
+  assert!(ser[8] == 0x12);
   assert!(ser.len() == 9)
 }
 
@@ -110,8 +110,8 @@ fn serialize_i8_negative() {
 fn serialize_i16_negative() {
   let m: schema::Test = schema::I16 { value: -0x1234 }.into();
   let ser = m.serialize();
-  assert!(ser[1] == 0xED);
-  assert!(ser[2] == 0xCC);
+  assert!(ser[1] == 0xCC);
+  assert!(ser[2] == 0xED);
   assert!(ser.len() == 3)
 }
 
@@ -119,10 +119,10 @@ fn serialize_i16_negative() {
 fn serialize_i32_negative() {
   let m: schema::Test = schema::I32 { value: -0x12345678 }.into();
   let ser = m.serialize();
-  assert!(ser[1] == 0xED);
-  assert!(ser[2] == 0xCB);
-  assert!(ser[3] == 0xA9);
-  assert!(ser[4] == 0x88);
+  assert!(ser[1] == 0x88);
+  assert!(ser[2] == 0xA9);
+  assert!(ser[3] == 0xCB);
+  assert!(ser[4] == 0xED);
   assert!(ser.len() == 5)
 }
 
@@ -133,14 +133,14 @@ fn serialize_i64_negative() {
   }
   .into();
   let ser = m.serialize();
-  assert!(ser[1] == 0xED);
-  assert!(ser[2] == 0xCB);
-  assert!(ser[3] == 0xA9);
-  assert!(ser[4] == 0x87);
-  assert!(ser[5] == 0x65);
-  assert!(ser[6] == 0x43);
-  assert!(ser[7] == 0x21);
-  assert!(ser[8] == 0x10);
+  assert!(ser[1] == 0x10);
+  assert!(ser[2] == 0x21);
+  assert!(ser[3] == 0x43);
+  assert!(ser[4] == 0x65);
+  assert!(ser[5] == 0x87);
+  assert!(ser[6] == 0xA9);
+  assert!(ser[7] == 0xCB);
+  assert!(ser[8] == 0xED);
   assert!(ser.len() == 9)
 }
 
@@ -163,10 +163,10 @@ fn serialize_f32() {
   }
   .into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x40);
-  assert!(ser[2] == 0x49);
-  assert!(ser[3] == 0x0f);
-  assert!(ser[4] == 0xdb);
+  assert!(ser[1] == 0xdb);
+  assert!(ser[2] == 0x0f);
+  assert!(ser[3] == 0x49);
+  assert!(ser[4] == 0x40);
   assert!(ser.len() == 5)
 }
 
@@ -177,14 +177,14 @@ fn serialize_f64() {
   }
   .into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x40);
-  assert!(ser[2] == 0x09);
-  assert!(ser[3] == 0x21);
-  assert!(ser[4] == 0xFB);
-  assert!(ser[5] == 0x54);
-  assert!(ser[6] == 0x44);
-  assert!(ser[7] == 0x2D);
-  assert!(ser[8] == 0x18);
+  assert!(ser[1] == 0x18);
+  assert!(ser[2] == 0x2D);
+  assert!(ser[3] == 0x44);
+  assert!(ser[4] == 0x54);
+  assert!(ser[5] == 0xFB);
+  assert!(ser[6] == 0x21);
+  assert!(ser[7] == 0x09);
+  assert!(ser[8] == 0x40);
   assert!(ser.len() == 9)
 }
 

@@ -3,7 +3,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Ident;
 
-use crate::format::{Argument, ArgumentFormat, Command, Schema};
+use crate::format::{Command, Schema};
 
 pub(crate) fn serialize_message(_schema: Schema, ident_name: Ident) -> TokenStream {
   quote! {
@@ -33,12 +33,21 @@ pub(crate) fn serialize_enum(
   }
 }
 
-pub(crate) fn serialize_command(command: Command, ident_name: Ident) -> TokenStream {
+pub(crate) fn serialize_command(
+  command: Command,
+  ident_name: Ident,
+  argument_names: Vec<Ident>,
+) -> TokenStream {
   let command_id = command.id;
-  let argument_generators: Vec<TokenStream> = command
+  let argument_format_functions: Vec<Ident> = command
     .arguments
     .iter()
-    .map(|f| serialize_argument(f.clone()))
+    .map(|f| {
+      Ident::new(
+        &format!("ser_{:?}", f.format).to_snake_case(),
+        Span::call_site(),
+      )
+    })
     .collect();
 
   let output = quote! {
@@ -46,45 +55,11 @@ pub(crate) fn serialize_command(command: Command, ident_name: Ident) -> TokenStr
       pub fn serialize(&self) -> Vec<u8> {
         #[allow(unused_mut)]
         let mut r = vec![#command_id];
-        #(r.append(&mut #argument_generators);)*
+        #(r.append(&mut primitives::#argument_format_functions(self.#argument_names.clone()));)*
         r
       }
     }
   };
 
   output
-}
-
-fn serialize_argument(argument: Argument) -> TokenStream {
-  let var_name = Ident::new(&argument.name.to_snake_case(), Span::call_site());
-  let value_access = quote! {self.#var_name};
-
-  match argument.format {
-    ArgumentFormat::U8 | ArgumentFormat::I8 => quote! {vec![#value_access as u8]},
-    // ArgumentFormat::U16
-    // | ArgumentFormat::U32
-    // | ArgumentFormat::U64
-    // | ArgumentFormat::I16
-    // | ArgumentFormat::I32
-    // | ArgumentFormat::I64
-    // | ArgumentFormat::F32
-    // | ArgumentFormat::F64 => quote! {#value_access.to_be_bytes().to_vec()},
-    ArgumentFormat::U16 | ArgumentFormat::I16 => {
-      quote! {(#value_access as u16).to_be_bytes().to_vec()}
-    }
-    ArgumentFormat::U32 | ArgumentFormat::I32 => {
-      quote! {(#value_access as u32).to_be_bytes().to_vec()}
-    }
-    ArgumentFormat::U64 | ArgumentFormat::I64 => {
-      quote! {(#value_access as u64).to_be_bytes().to_vec()}
-    }
-    ArgumentFormat::F32 | ArgumentFormat::F64 => {
-      quote! {#value_access.to_be_bytes().to_vec()}
-    }
-    ArgumentFormat::String => quote! {{
-      let mut v = #value_access.clone().into_bytes();
-      v.push(0);
-      v
-    }},
-  }
 }
