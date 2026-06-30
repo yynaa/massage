@@ -110,7 +110,6 @@ fn serialize_i8_negative() {
 fn serialize_i16_negative() {
   let m: schema::Test = schema::I16 { value: -0x1234 }.into();
   let ser = m.serialize();
-  println!("{:?}", ser);
   assert!(ser[1] == 0xED);
   assert!(ser[2] == 0xCC);
   assert!(ser.len() == 3)
@@ -152,7 +151,8 @@ fn serialize_string() {
   }
   .into();
   let ser = m.serialize();
-  assert!(ser[1] == 0x6);
+  assert!(ser[1] == 0x68);
+  assert!(ser[7] == 0x0);
   assert!(ser.len() == 8)
 }
 
@@ -186,4 +186,16 @@ fn serialize_f64() {
   assert!(ser[7] == 0x2D);
   assert!(ser[8] == 0x18);
   assert!(ser.len() == 9)
+}
+
+#[test]
+fn serialize_zero_termination() {
+  let m: schema::Test = schema::ZeroTermination {
+    a: "hello!".into(),
+    b: 0x69,
+  }
+  .into();
+  let ser = m.serialize();
+  assert!(ser.len() == 9);
+  assert!(ser[7] == 0);
 }

@@ -54,8 +54,8 @@ fn serialize_argument(argument: Argument) -> TokenStream {
       quote! {#value_access.to_be_bytes().to_vec()}
     }
     ArgumentFormat::String => quote! {{
-      let mut v = vec![#value_access.len() as u8];
-      v.extend(#value_access.clone().into_bytes());
+      let mut v = #value_access.clone().into_bytes();
+      v.push(0);
       v
     }},
   }

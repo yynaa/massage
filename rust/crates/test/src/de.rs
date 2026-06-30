@@ -101,7 +101,7 @@ fn deserialize_i64_negative() {
 
 #[test]
 fn deserialize_string() {
-  let m = schema::Test::deserialize(vec![9, 6, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x21]).unwrap();
+  let m = schema::Test::deserialize(vec![9, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x21, 0x0]).unwrap();
   assert_eq!(
     m,
     schema::Str {
@@ -134,4 +134,10 @@ fn deserialize_f64() {
     }
     .into()
   );
+}
+
+#[test]
+fn no_zero_termination() {
+  let m = schema::Test::deserialize(vec![9, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x21]);
+  assert!(m.is_none());
 }

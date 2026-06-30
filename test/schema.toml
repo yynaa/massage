@@ -79,3 +79,14 @@ id = 11
 [[commands.F64.arguments]]
 name = "value"
 format = "F64"
+
+[commands.zero_termination]
+id = 128
+
+[[commands.zero_termination.arguments]]
+name = "a"
+format = "String"
+
+[[commands.zero_termination.arguments]]
+name = "b"
+format = "U8"

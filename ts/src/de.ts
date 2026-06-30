@@ -92,11 +92,11 @@ export function deserialize_command(
               ];
             case "String":
               return [
-                `if (bytes.length < 1) return undefined`,
-                `const ${arg.name}Length = bytes.splice(-1)[0] || 0`,
-                `if (bytes.length < ${arg.name}Length) return undefined`,
-                `let ${arg.name}Bytes = bytes.splice(-${arg.name}Length)`,
+                `const ${arg.name}ZeroIndex = bytes.lastIndexOf(0)`,
+                `if (${arg.name}ZeroIndex === -1) return undefined`,
+                `let ${arg.name}Bytes = bytes.splice(${arg.name}ZeroIndex)`,
                 `${arg.name}Bytes.reverse()`,
+                `${arg.name}Bytes.pop()`,
                 `const ${arg.name}Arg = new TextDecoder().decode(new Uint8Array(${arg.name}Bytes))`,
               ];
             default:

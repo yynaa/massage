@@ -16,7 +16,6 @@ test("serialize u8", () => {
 test("serialize u16", () => {
   const m = new schm.Test(new schm.U16(0x1234));
   const ser = m.serialize();
-  console.log(ser);
   expect(ser[1]).toBe(0x12);
   expect(ser[2]).toBe(0x34);
   expect(ser.length).toBe(3);
@@ -32,10 +31,9 @@ test("serialize u32", () => {
   expect(ser.length).toBe(5);
 });
 
-test.only("serialize u64", () => {
+test("serialize u64", () => {
   const m = new schm.Test(new schm.U64(0x123456789abcdef0n));
   const ser = m.serialize();
-  console.log(ser);
   expect(ser[1]).toBe(0x12);
   expect(ser[2]).toBe(0x34);
   expect(ser[3]).toBe(0x56);
@@ -128,7 +126,8 @@ test("serialize i64 negative", () => {
 test("serialize string", () => {
   const m = new schm.Test(new schm.Str("hello!"));
   const ser = m.serialize();
-  expect(ser[1]).toBe(0x6);
+  expect(ser[1]).toBe(0x68);
+  expect(ser[7]).toBe(0x0);
   expect(ser.length).toBe(8);
 });
 
@@ -153,5 +152,12 @@ test("serialize f64", () => {
   expect(ser[6]).toBe(0x44);
   expect(ser[7]).toBe(0x2d);
   expect(ser[8]).toBe(0x18);
+  expect(ser.length).toBe(9);
+});
+
+test("serialize zero termination", () => {
+  const m = new schm.Test(new schm.ZeroTermination("hello!", 69));
+  const ser = m.serialize();
+  expect(ser[7]).toBe(0x0);
   expect(ser.length).toBe(9);
 });

@@ -165,22 +165,35 @@ fn deserialize_argument(argument: Argument) -> TokenStream {
       }
     },
     ArgumentFormat::String => quote! {
-      if let Some(str_len) = bytes.pop() {
-        let len = bytes.len();
-        if len >= str_len as usize {
-          let mut b = bytes.split_off(len-str_len as usize);
-          b.reverse();
-          if let Ok(string) = String::from_utf8(b) {
-            Some(string)
-          } else {
-            None
+      // if let Some(str_len) = bytes.pop() {
+      //   let len = bytes.len();
+      //   if len >= str_len as usize {
+      //     let mut b = bytes.split_off(len-str_len as usize);
+      //     b.reverse();
+      //     if let Ok(string) = String::from_utf8(b) {
+      //       Some(string)
+      //     } else {
+      //       None
+      //     }
+      //   } else {
+      //     None
+      //   }
+      // } else {
+      //   None
+      // }
+      let mut result = None;
+      let mut res_bytes = vec![];
+      while let Some(str_byte) = bytes.pop() {
+        if str_byte == 0 {
+          if let Ok(string) = String::from_utf8(res_bytes) {
+            result = Some(string);
           }
+          break;
         } else {
-          None
+          res_bytes.push(str_byte);
         }
-      } else {
-        None
       }
+      result
     },
   }
 }

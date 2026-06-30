@@ -87,11 +87,11 @@ import { ... } from "@massage/<Name of your message>";
 
 ## TODO
 
-- [ ] floating point numbers
-- [ ] use nil-terminated strings for arbitrary string sizes
+- [x] floating point numbers
+- [x] use nil-terminated strings for arbitrary string sizes
 - [ ] message prefixes
 - [ ] Lua support
 - [ ] testing
   - [x] Rust
-  - [ ] TS
+  - [x] TS
   - [ ] inter-language

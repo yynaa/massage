@@ -25,9 +25,11 @@ test("deserialize u32", () => {
 });
 
 test("deserialize u64", () => {
-  const m = schm.Test.deserialize(new Uint8Array([4, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0]));
+  const m = schm.Test.deserialize(
+    new Uint8Array([4, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0]),
+  );
   expect(m).not.toBeUndefined();
-  expect(m).toEqual(new schm.Test(new schm.U64(0x123456789ABCDEF0n)));
+  expect(m).toEqual(new schm.Test(new schm.U64(0x123456789abcdef0n)));
 });
 
 test("deserialize i8", () => {
@@ -49,9 +51,11 @@ test("deserialize i32", () => {
 });
 
 test("deserialize i64", () => {
-  const m = schm.Test.deserialize(new Uint8Array([8, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0]));
+  const m = schm.Test.deserialize(
+    new Uint8Array([8, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0]),
+  );
   expect(m).not.toBeUndefined();
-  expect(m).toEqual(new schm.Test(new schm.I64(0x123456789ABCDEF0n)));
+  expect(m).toEqual(new schm.Test(new schm.I64(0x123456789abcdef0n)));
 });
 
 test("deserialize i8 negative", () => {
@@ -61,25 +65,29 @@ test("deserialize i8 negative", () => {
 });
 
 test("deserialize i16 negative", () => {
-  const m = schm.Test.deserialize(new Uint8Array([6, 0xED, 0xCC]));
+  const m = schm.Test.deserialize(new Uint8Array([6, 0xed, 0xcc]));
   expect(m).not.toBeUndefined();
   expect(m).toEqual(new schm.Test(new schm.I16(-0x1234)));
 });
 
 test("deserialize i32 negative", () => {
-  const m = schm.Test.deserialize(new Uint8Array([7, 0xED, 0xCB, 0xA9, 0x88]));
+  const m = schm.Test.deserialize(new Uint8Array([7, 0xed, 0xcb, 0xa9, 0x88]));
   expect(m).not.toBeUndefined();
   expect(m).toEqual(new schm.Test(new schm.I32(-0x12345678)));
 });
 
 test("deserialize i64 negative", () => {
-  const m = schm.Test.deserialize(new Uint8Array([8, 0xED, 0xCB, 0xA9, 0x87, 0x65, 0x43, 0x21, 0x10]));
+  const m = schm.Test.deserialize(
+    new Uint8Array([8, 0xed, 0xcb, 0xa9, 0x87, 0x65, 0x43, 0x21, 0x10]),
+  );
   expect(m).not.toBeUndefined();
-  expect(m).toEqual(new schm.Test(new schm.I64(-0x123456789ABCDEF0n)));
+  expect(m).toEqual(new schm.Test(new schm.I64(-0x123456789abcdef0n)));
 });
 
 test("deserialize string", () => {
-  const m = schm.Test.deserialize(new Uint8Array([9, 6, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x21]));
+  const m = schm.Test.deserialize(
+    new Uint8Array([9, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x21, 0]),
+  );
   expect(m).not.toBeUndefined();
   expect(m).toEqual(new schm.Test(new schm.Str("hello!")));
 });
@@ -90,6 +98,15 @@ test("deserialize f32", () => {
 });
 
 test("deserialize f64", () => {
-  const m = schm.Test.deserialize(new Uint8Array([11, 0x40, 0x09, 0x21, 0xFB, 0x54, 0x44, 0x2D, 0x18]));
+  const m = schm.Test.deserialize(
+    new Uint8Array([11, 0x40, 0x09, 0x21, 0xfb, 0x54, 0x44, 0x2d, 0x18]),
+  );
   expect(m).not.toBeUndefined();
+});
+
+test("no zero termination", () => {
+  const m = schm.Test.deserialize(
+    new Uint8Array([9, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x21]),
+  );
+  expect(m).toBeUndefined();
 });

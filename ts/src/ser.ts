@@ -16,42 +16,42 @@ export function serialize_command(
           switch (arg.format) {
             case "U8":
               return [
-                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(1)`,
                 `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
                 `${snakeCase(arg.name)}DataView.setUint8(0, this.${snakeCase(arg.name)}, false)`,
                 `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "I8":
               return [
-                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(1)`,
                 `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
                 `${snakeCase(arg.name)}DataView.setInt8(0, this.${snakeCase(arg.name)}, false)`,
                 `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "U16":
               return [
-                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(2)`,
                 `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
                 `${snakeCase(arg.name)}DataView.setUint16(0, this.${snakeCase(arg.name)}, false)`,
                 `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "I16":
               return [
-                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(2)`,
                 `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
                 `${snakeCase(arg.name)}DataView.setInt16(0, this.${snakeCase(arg.name)}, false)`,
                 `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "U32":
               return [
-                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(4)`,
                 `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
                 `${snakeCase(arg.name)}DataView.setUint32(0, this.${snakeCase(arg.name)}, false)`,
                 `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
               ];
             case "I32":
               return [
-                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(8)`,
+                `const ${snakeCase(arg.name)}Buffer = new ArrayBuffer(4)`,
                 `const ${snakeCase(arg.name)}DataView = new DataView(${snakeCase(arg.name)}Buffer)`,
                 `${snakeCase(arg.name)}DataView.setInt32(0, this.${snakeCase(arg.name)}, false)`,
                 `[...new Uint8Array(${snakeCase(arg.name)}Buffer)]`,
@@ -86,7 +86,7 @@ export function serialize_command(
               ];
             case "String":
               return [
-                `const ${snakeCase(arg.name)}Arg = [this.${snakeCase(arg.name)}.length, ...new TextEncoder().encode(this.${snakeCase(arg.name)})]`,
+                `const ${snakeCase(arg.name)}Arg = [...new TextEncoder().encode(this.${snakeCase(arg.name)}), 0]`,
                 `${snakeCase(arg.name)}Arg`,
               ];
             default:
