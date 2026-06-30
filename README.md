@@ -36,9 +36,8 @@ description = "your name"
 - MIDI-like messages
 - no schema version control (who needs that?)
 
-## Packages
 
-### Rust
+## Rust
 
 ```rs
 // build.rs
@@ -61,7 +60,7 @@ You can run the example with:
 cargo run
 ```
 
-### TS
+## TS
 
 ```ts
 // build.ts -- or wherever you build your app or might run setup scripts
@@ -85,12 +84,54 @@ await generate_schema(schema);
 import { ... } from "@massage/<Name of your message>";
 ```
 
+## Lua (LuaJIT & LuaCATS)
+
+> [!IMPORTANT]
+> Lua has no 64-bit integer type, so u64 and i64 will:
+> - serialize as 0x00000000
+> - deserialize as 0
+
+```lua
+--- @type Massage
+local massage = require("lib.massage")
+
+-- build your message
+local schema = massage.schema_from_path("../simple.toml")
+massage.build_schema(schema, "generated")
+
+-- use your message as soon as it is built
+local Simple = require("generated.simple")
+
+-- create a new message
+local message = Simple.Hello.new("Sophie"):_wrap()
+print("message:")
+print(inspect(message))
+
+-- edit your message
+message.command.name = "Not Sophie"
+
+-- serialize your message
+local ser = message:_serialize()
+
+-- deserialize your message
+local de = Simple.deserialize(ser)
+```
+
+### Bundling
+
+Massage is made to be used in various systems, so that it requires to be bundled in a single file.  
+it also comes with `_primitives.lua`, the ser/de library used by generated files.  
+these two files need to be located **in the same folder** for them to work.
+
+you can bundle Massage yourself with
+```sh
+make bundle_lua
+```
+a folder will be created at `lua/dist/` containing the bundled library & runtime library.
+
 ## TODO
 
-- [x] floating point numbers
-- [x] use nil-terminated strings for arbitrary string sizes
-- [ ] Lua support
-- [ ] testing
-  - [x] Rust
-  - [x] TS
-  - [ ] inter-language
+- [ ] make a proper primitives lib for Rust
+- [ ] make a proper primitives lib for TS
+- [ ] tests for Lua
+- [ ] attempt support for u64/i64/f64 in Lua
