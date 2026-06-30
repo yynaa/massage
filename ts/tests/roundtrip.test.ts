@@ -60,3 +60,11 @@ test("roundtrip f64", () => {
   const m = new schm.Test(new schm.F64(6));
   expect(schm.Test.deserialize(m.serialize())).toEqual(m);
 });
+
+test("roundtrip one of everything", () => {
+  const m = new schm.Test(
+    new schm.OneOfEverything(1, 2, 3, 4n, 5, 6, 7, 8n, 9, 10, "hello"),
+  );
+  console.log(m.serialize());
+  expect(schm.Test.deserialize(m.serialize())).toEqual(m);
+});

@@ -90,3 +90,50 @@ format = "String"
 [[commands.zero_termination.arguments]]
 name = "b"
 format = "U8"
+
+[commands.one_of_everything]
+id = 129
+
+[[commands.one_of_everything.arguments]]
+name = "a"
+format = "U8"
+
+[[commands.one_of_everything.arguments]]
+name = "b"
+format = "U16"
+
+[[commands.one_of_everything.arguments]]
+name = "c"
+format = "U32"
+
+[[commands.one_of_everything.arguments]]
+name = "d"
+format = "U64"
+
+[[commands.one_of_everything.arguments]]
+name = "e"
+format = "I8"
+
+[[commands.one_of_everything.arguments]]
+name = "f"
+format = "I16"
+
+[[commands.one_of_everything.arguments]]
+name = "g"
+format = "I32"
+
+[[commands.one_of_everything.arguments]]
+name = "h"
+format = "I64"
+
+[[commands.one_of_everything.arguments]]
+name = "i"
+format = "F32"
+
+[[commands.one_of_everything.arguments]]
+name = "j"
+format = "F64"
+
+[[commands.one_of_everything.arguments]]
+name = "k"
+format = "String"

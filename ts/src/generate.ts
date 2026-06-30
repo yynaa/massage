@@ -1,4 +1,6 @@
 import { Project, ScriptTarget, SourceFile } from "ts-morph";
+import { copyFileSync } from "fs";
+
 import type { ArgumentFormat, Command, Schema } from "./format";
 import { pascalCase, snakeCase } from "change-case";
 import { serialize_command } from "./ser";
@@ -15,6 +17,10 @@ export async function generate_schema(schema: Schema) {
     undefined,
     { overwrite: true },
   );
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: "./_primitives",
+    namespaceImport: "primitives",
+  });
   sourceFile.addTypeAlias({
     name: `${pascalCase(schema.name)}Command`,
     type: Object.keys(schema.commands)
@@ -58,9 +64,8 @@ export async function generate_schema(schema: Schema) {
         isStatic: true,
         statements: [
           `const bn = Array.from(bytes)`,
-          `bn.reverse()`,
           `if (bn.length < 1) return undefined`,
-          `const command_id = bn.splice(-1)[0] || 0`,
+          `const command_id = bn.shift()`,
           `switch (command_id) {\n${Object.entries(schema.commands)
             .map(([name, command]) => {
               return `case ${command.id}: const ${snakeCase(name)} = ${pascalCase(name)}.deserialize(bn); return ${snakeCase(name)} ? new ${pascalCase(schema.name)}(${snakeCase(name)}) : undefined;\n`;
@@ -77,6 +82,8 @@ export async function generate_schema(schema: Schema) {
   }
 
   await sourceFile.save();
+
+  copyFileSync("src/_primitives.ts", ".generated/_primitives.ts");
 }
 
 export function generate_command(

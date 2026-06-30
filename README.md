@@ -41,10 +41,8 @@ description = "your name"
 
 ```rs
 // build.rs
-use massage::format::Schema;
-
 fn main() {
-  let schema = Schema::from_path("<path to .toml>").unwrap();
+  let schema = massage::format::Schema::from_path("<path to .toml>").unwrap();
   massage::generate::build_schema(schema);
 }
 ```
@@ -128,6 +126,10 @@ you can bundle Massage yourself with
 make bundle_lua
 ```
 a folder will be created at `lua/dist/` containing the bundled library & runtime library.
+
+## Technicals/how it works
+
+todo!()
 
 ## TODO
 
