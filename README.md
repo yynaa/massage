@@ -3,6 +3,8 @@
 
 **a simple command-like tailor-made message library for a handful of languages**
 
+[![libera manifesto](https://img.shields.io/badge/libera-manifesto-lightgrey.svg)](https://liberamanifesto.com)
+
 write a schema...
 ```toml
 # this Massage example shows a few simple messages you might want to send.
