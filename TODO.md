@@ -1,0 +1,2 @@
+- prevent all keywords in Lua, and check if other languages can be impacted by this
+- add deserialization message length to Rust and TS

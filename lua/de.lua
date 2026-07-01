@@ -20,12 +20,12 @@ function(bytes)
   if #bytes < 1 then return nil end
   local command_id = bytes:byte()
   bytes = bytes:sub(2)
-  local result
+  local result, length
 <% for name, command in pairs(command_helpers) do -%>
-  if command_id == <%- command.id -%> then result = <%- schema_name -%>.<%- command.name -%>.deserialize(bytes) end
+  if command_id == <%- command.id -%> then result, length = <%- schema_name -%>.<%- command.name -%>.deserialize(bytes) end
 <% end -%>
-  if result then return <%- schema_name -%>.new(result) end 
-  return nil
+  if result then return <%- schema_name -%>.new(result), length + 1 end 
+  return nil, 0
 end]])
 	local output = template({
 		command_helpers = command_helpers,
@@ -76,14 +76,17 @@ function de.deserialize_command(schema, name, command)
 
 	local template = etlua.compile([[
 function(bytes)
+  local _total_length = 0
 <% for i, arg in ipairs(argument_helpers) do -%>
   local <%- arg.name_field -%>_length = (<%- arg.format_length -%>)(bytes)
-  if not <%- arg.name_field -%>_length or #bytes < <%- arg.name_field -%>_length then return nil end
+  if <%- arg.name_field -%>_length == nil or #bytes < <%- arg.name_field -%>_length then return nil, 0 end
+  _total_length = _total_length + <%- arg.name_field -%>_length
   local <%- arg.name_field -%>_bytes = bytes:sub(1, <%- arg.name_field -%>_length)
   bytes = bytes:sub(<%- arg.name_field -%>_length + 1)
   local <%- arg.name_field -%> = primitives.de_<%- arg.format_ser -%>(<%- arg.name_field -%>_bytes)
+  if <%- arg.name_field -%> == nil then return nil, 0 end
 <% end -%>
-  return <%- schema_name -%>.<%- command_name %>.new(<%- table.concat(argument_names, ", ") -%>)
+  return <%- schema_name -%>.<%- command_name %>.new(<%- table.concat(argument_names, ", ") -%>), _total_length
 end]])
 	local output = template({
 		command_name = casing.pascal(name),

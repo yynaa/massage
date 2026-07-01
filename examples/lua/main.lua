@@ -33,6 +33,6 @@ print(inspect(ser))
 
 -- deserialize your message
 
-local de = Simple.deserialize(ser)
+local de, length = Simple.deserialize(ser)
 print("deserialized:")
 print(inspect(de))

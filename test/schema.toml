@@ -148,3 +148,22 @@ format = "String"
 [[commands.one_of_everything.arguments]]
 name = "l"
 format = "Bool"
+
+[commands.length_test]
+id = 130
+
+[[commands.length_test.arguments]]
+name = "a"
+format = "U8"
+
+[[commands.length_test.arguments]]
+name = "b"
+format = "U16"
+
+[[commands.length_test.arguments]]
+name = "c"
+format = "U32"
+
+[[commands.length_test.arguments]]
+name = "d"
+format = "U64"

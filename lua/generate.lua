@@ -62,7 +62,7 @@ local function generate_command(schema, name, command)
 <%- command_description -%>
 --- @class <%- command_name %>Interface
 --- @field id integer
---- @field deserialize fun(bytes: string): <%- command_name %> | nil
+--- @field deserialize fun(bytes: string): <%- command_name %> | nil, integer
 <%- schema_name %>.<%- command_name %> = {}
 <%- schema_name %>.<%- command_name %>.id = <%- command_id %>
 <%- schema_name %>.<%- command_name %>.deserialize = <%- deserializer %>
@@ -131,7 +131,7 @@ local primitives = require("<%- require_path -%>._primitives")
 <% for name, command in pairs(commands) do -%>
 --- @field <%- command.name %> <%- command.name %>Interface
 <% end -%>
---- @field deserialize fun(bytes: string): <%- schema_name %> | nil
+--- @field deserialize fun(bytes: string): <%- schema_name %> | nil, integer
 local <%- schema_name %> = {}
 <%- schema_name %>.deserialize = <%- deserializer %>
 
