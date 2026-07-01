@@ -134,6 +134,8 @@ export function generate_command(
 
 function parse_argument_format(format: ArgumentFormat): string {
   switch (format) {
+    case "Bool":
+      return "boolean";
     case "U8":
     case "U16":
     case "U32":

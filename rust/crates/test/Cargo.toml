@@ -1,8 +1,6 @@
 [package]
 name = "massage-test"
 version = "0.1.0"
-authors = "yyna [https://yyna.xyz]"
-repository = "https://github.com/yynaa/massage"
 edition = "2024"
 
 [dependencies]

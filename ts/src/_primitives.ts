@@ -114,3 +114,14 @@ export function serString(value: string): number[] {
 export function deString(bytes: number[]): string | undefined {
   return new TextDecoder().decode(new Uint8Array(bytes.slice(0, -1)));
 }
+
+export function serBool(value: boolean): number[] {
+  return [value ? 1 : 0];
+}
+export function deBool(value: number[]): boolean | undefined {
+  if (value[0] !== undefined) {
+    return value[0] > 0;
+  } else {
+    return undefined;
+  }
+}

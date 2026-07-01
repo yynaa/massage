@@ -21,3 +21,7 @@ tests_rust:
 
 tests_ts:
 	cd ts; bun install; bun run tests/setup; bun test --verbose
+
+tests_lua:
+	mkdir -p lua/tests/gen/
+	cd lua; luajit tests/init.lua -v

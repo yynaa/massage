@@ -13,6 +13,12 @@ fn deserialize_u8() {
 }
 
 #[test]
+fn deserialize_bool() {
+  let m = schema::Test::deserialize(vec![12, 1]).unwrap();
+  assert_eq!(m, schema::Bool { value: true }.into());
+}
+
+#[test]
 fn deserialize_u16() {
   let m = schema::Test::deserialize(vec![2, 0x34, 0x12]).unwrap();
   assert_eq!(m, schema::U16 { value: 0x1234 }.into());

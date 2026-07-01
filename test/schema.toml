@@ -80,6 +80,13 @@ id = 11
 name = "value"
 format = "F64"
 
+[commands.Bool]
+id = 12
+
+[[commands.Bool.arguments]]
+name = "value"
+format = "Bool"
+
 [commands.zero_termination]
 id = 128
 
@@ -137,3 +144,7 @@ format = "F64"
 [[commands.one_of_everything.arguments]]
 name = "k"
 format = "String"
+
+[[commands.one_of_everything.arguments]]
+name = "l"
+format = "Bool"

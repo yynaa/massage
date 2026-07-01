@@ -27,6 +27,7 @@ pub struct Argument {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum ArgumentFormat {
+  Bool,
   String,
   U8,
   U16,

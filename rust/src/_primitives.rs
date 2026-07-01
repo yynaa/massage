@@ -109,3 +109,16 @@ pub(super) fn ser_string(value: String) -> Vec<u8> {
 pub(super) fn de_string(mut bytes: Vec<u8>) -> Option<String> {
   String::from_utf8(bytes).ok()
 }
+
+#[allow(unused)]
+pub(super) fn ser_bool(value: bool) -> Vec<u8> {
+  vec![match value {
+    false => 0,
+    true => 1,
+  }]
+}
+
+#[allow(unused)]
+pub(super) fn de_bool(bytes: Vec<u8>) -> Option<bool> {
+  bytes.get(0).map(|&v| v > 0)
+}

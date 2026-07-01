@@ -61,9 +61,14 @@ test("roundtrip f64", () => {
   expect(schm.Test.deserialize(m.serialize())).toEqual(m);
 });
 
+test("roundtrip bool", () => {
+  const m = new schm.Test(new schm.Bool(true));
+  expect(schm.Test.deserialize(m.serialize())).toEqual(m);
+});
+
 test("roundtrip one of everything", () => {
   const m = new schm.Test(
-    new schm.OneOfEverything(1, 2, 3, 4n, 5, 6, 7, 8n, 9, 10, "hello"),
+    new schm.OneOfEverything(1, 2, 3, 4n, 5, 6, 7, 8n, 9, 10, "hello", true),
   );
   console.log(m.serialize());
   expect(schm.Test.deserialize(m.serialize())).toEqual(m);

@@ -37,7 +37,7 @@ end
 --- @param format ArgumentFormat
 --- @return string
 local function format_length(format)
-	if format == "U8" or format == "I8" then
+	if format == "U8" or format == "I8" or format == "Bool" then
 		return "function(bytes) return 1 end"
 	elseif format == "U16" or format == "I16" then
 		return "function(bytes) return 2 end"

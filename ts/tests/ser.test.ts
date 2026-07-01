@@ -13,6 +13,13 @@ test("serialize u8", () => {
   expect(ser.length).toBe(2);
 });
 
+test("serialize bool", () => {
+  const m = new schm.Test(new schm.Bool(true));
+  const ser = m.serialize();
+  expect(ser[1]).toBe(1);
+  expect(ser.length).toBe(2);
+});
+
 test("serialize u16", () => {
   const m = new schm.Test(new schm.U16(0x1234));
   const ser = m.serialize();

@@ -211,6 +211,7 @@ fn generate_argument_format(argument_format: ArgumentFormat) -> TokenStream {
     ArgumentFormat::I64 => quote! {i64},
     ArgumentFormat::F32 => quote! {f32},
     ArgumentFormat::F64 => quote! {f64},
+    ArgumentFormat::Bool => quote! {bool},
   };
   output
 }

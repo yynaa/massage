@@ -15,7 +15,7 @@ local format = {}
 --- @field description string | nil
 --- @field format ArgumentFormat
 
---- @alias ArgumentFormat "String" | "U8" | "U16" | "U32" | "U64" | "I8" | "I16" | "I32" | "I64" | "F32" | "F64"
+--- @alias ArgumentFormat "String" | "Bool" | "U8" | "U16" | "U32" | "U64" | "I8" | "I16" | "I32" | "I64" | "F32" | "F64"
 
 local tinytoml = require("lib.tinytoml")
 

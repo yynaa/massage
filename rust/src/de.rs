@@ -135,7 +135,7 @@ pub(crate) fn deserialize_command(
 
 fn argument_length_from_format(format: ArgumentFormat) -> TokenStream {
   match format {
-    ArgumentFormat::U8 | ArgumentFormat::I8 => quote! {Some(1)},
+    ArgumentFormat::U8 | ArgumentFormat::I8 | ArgumentFormat::Bool => quote! {Some(1)},
     ArgumentFormat::U16 | ArgumentFormat::I16 => quote! {Some(2)},
     ArgumentFormat::U32 | ArgumentFormat::I32 | ArgumentFormat::F32 => quote! {Some(4)},
     ArgumentFormat::U64 | ArgumentFormat::I64 | ArgumentFormat::F64 => quote! {Some(8)},

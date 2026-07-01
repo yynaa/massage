@@ -13,6 +13,8 @@ local function generate_argument_format(arg_format)
 		return "string"
 	elseif arg_format == "F32" or arg_format == "F64" then
 		return "number"
+	elseif arg_format == "Bool" then
+		return "boolean"
 	else
 		return "integer"
 	end

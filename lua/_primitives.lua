@@ -350,4 +350,20 @@ function _primitives.de_string(value)
 	return struct.unpack("s", value)
 end
 
+--- @param value boolean
+--- @return string
+function _primitives.ser_bool(value)
+	if value then
+		return string.char(1)
+	else
+		return string.char(0)
+	end
+end
+
+--- @param value string
+--- @return boolean
+function _primitives.de_bool(value)
+	return value:byte() > 0
+end
+
 return _primitives

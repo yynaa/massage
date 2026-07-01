@@ -12,6 +12,12 @@ test("deserialize u8", () => {
   expect(m).toEqual(new schm.Test(new schm.U8(69)));
 });
 
+test("deserialize bool", () => {
+  const m = schm.Test.deserialize(new Uint8Array([12, 1]));
+  expect(m).not.toBeUndefined();
+  expect(m).toEqual(new schm.Test(new schm.Bool(true)));
+});
+
 test("deserialize u16", () => {
   const m = schm.Test.deserialize(new Uint8Array([2, 0x34, 0x12]));
   expect(m).not.toBeUndefined();

@@ -5,6 +5,11 @@
 
 [![libera manifesto](https://img.shields.io/badge/libera-manifesto-lightgrey.svg)](https://liberamanifesto.com)
 
+![Static Badge](https://img.shields.io/badge/0.25.07.1-green)
+![Static Badge](https://img.shields.io/badge/rust-0.2.0-D34516?logo=rust)
+![Static Badge](https://img.shields.io/badge/ts-0.2.0-3178C6?logo=typescript)
+![Static Badge](https://img.shields.io/badge/luajit-0.2.0-000080?logo=lua)
+
 write a schema...
 ```toml
 # this Massage example shows a few simple messages you might want to send.

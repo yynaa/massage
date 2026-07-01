@@ -15,6 +15,14 @@ fn serialize_u8() {
 }
 
 #[test]
+fn serialize_bool() {
+  let m: schema::Test = schema::Bool { value: true }.into();
+  let ser = m.serialize();
+  assert!(ser[1] == 1);
+  assert!(ser.len() == 2)
+}
+
+#[test]
 fn serialize_u16() {
   let m: schema::Test = schema::U16 { value: 0x1234 }.into();
   let ser = m.serialize();

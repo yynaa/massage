@@ -21,6 +21,7 @@ export interface Argument {
 
 export type ArgumentFormat =
   | "String"
+  | "Bool"
   | "U8"
   | "U16"
   | "U32"

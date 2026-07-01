@@ -5,7 +5,7 @@
     "url": "https://yyna.xyz"
   },
   "homepage": "https://github.com/yynaa/massage",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
