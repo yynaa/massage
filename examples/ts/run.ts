@@ -2,7 +2,7 @@
 import { Hello, Simple } from "@massage/Simple";
 
 // create your message
-const message = new Simple(new Hello("Sophie"));
+const message = new Hello("Sophie")._wrap();
 console.log("message:");
 console.log(message);
 
@@ -10,7 +10,7 @@ console.log(message);
 (message.command as Hello).name = "Not Sophie";
 
 // serialize your message
-const ser = message.serialize();
+const ser = message._serialize();
 console.log("serialized:");
 console.log(ser);
 

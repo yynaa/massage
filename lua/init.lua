@@ -4,7 +4,7 @@
 --- @field _VERSION string
 --- @field _CHANGETAG string
 --- @field schema_from_path fun(path: string): Schema
---- @field build_schema fun(schema: Schema, path: string)
+--- @field build_schema fun(schema: Schema, path: string, require_path: string)
 local massage = {}
 
 local format = require("format")

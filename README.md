@@ -5,10 +5,10 @@
 
 [![libera manifesto](https://img.shields.io/badge/libera-manifesto-lightgrey.svg)](https://liberamanifesto.com)
 
-![Static Badge](https://img.shields.io/badge/0.25.07.1-green)
+![Static Badge](https://img.shields.io/badge/0.25.07.2-green)
 ![Static Badge](https://img.shields.io/badge/rust-0.2.0-D34516?logo=rust)
-![Static Badge](https://img.shields.io/badge/ts-0.2.0-3178C6?logo=typescript)
-![Static Badge](https://img.shields.io/badge/luajit-0.2.0-000080?logo=lua)
+![Static Badge](https://img.shields.io/badge/ts-0.3.0-3178C6?logo=typescript)
+![Static Badge](https://img.shields.io/badge/luajit-0.3.0-000080?logo=lua)
 
 write a schema...
 ```toml
@@ -39,7 +39,7 @@ let mut message: Simple = Hello {
 .into()
 ```
 ```ts
-const message = new Simple(new Hello("Sophie"));
+const message = new Hello("Sophie")._wrap();
 ```
 ```lua
 local message = Simple.Hello.new("Sophie"):_wrap()
@@ -142,13 +142,13 @@ In `tsconfig.json`:
 import { Hello, Simple } from "@massage/Simple";
 
 // create your message
-const message = new Simple(new Hello("Sophie"));
+const message = new Hello("Sophie")._wrap();
 
 // edit your message
 (message.command as Hello).name = "Not Sophie";
 
 // serialize your message
-const ser = message.serialize();
+const ser = message._serialize();
 
 // deserialize your message
 const de = Simple.deserialize(ser);

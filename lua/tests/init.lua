@@ -1,4 +1,4 @@
-require("generate").build_schema(require("format").parse_from_path("../test/schema.toml"), "tests/gen")
+require("generate").build_schema(require("format").parse_from_path("../test/schema.toml"), "tests/gen", "tests.gen")
 
 Lu = require("lib.luaunit")
 

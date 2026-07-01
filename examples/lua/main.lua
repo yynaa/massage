@@ -9,7 +9,7 @@ local massage = require("lib.massage")
 -- build your message
 
 local schema = massage.schema_from_path("../simple.toml")
-massage.build_schema(schema, "generated")
+massage.build_schema(schema, "generated", "generated")
 
 -- use your message as soon as it is built
 

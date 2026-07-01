@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.25.07.2
+
+| **Rust** | **TS** | **LuaJIT** |
+|:---:|:---:|:---:|
+| 0.2.0 | 0.3.0 | 0.3.0 |
+
+### Added
+
+- [TS] Added wrapper `com._wrap()` that wraps a command into a message
+
+### Changed
+
+- [Lua] Require PATH to generation folder is now needed when building message code (compatibility)
+- [TS] `msg.serialize()` has become `msg._serialize()` to avoid collisions with schema arguments
+
 ## 0.25.07.1
 
 | **Rust** | **TS** | **LuaJIT** |
@@ -30,5 +45,6 @@
 
 | **Global** | **Rust** | **TS** | **LuaJIT** |
 |:---:|:---:|:---:|:---:|
+| 0.25.07.2 | 0.2.0 | 0.3.0 | 0.3.0 |
 | 0.25.07.1 | 0.2.0 | 0.2.0 | 0.2.0 |
 | 0.25.07.0 | 0.1.0 | 0.1.0 | 0.1.0 |

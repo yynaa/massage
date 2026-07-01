@@ -96,8 +96,9 @@ end
 end
 
 --- @param schema Schema
+--- @param require_path string
 --- @return string
-function generate.generate_schema(schema)
+function generate.generate_schema(schema, require_path)
 	local commands = {}
 	for name, command in pairs(schema.commands) do
 		commands[name] = {
@@ -118,8 +119,7 @@ function generate.generate_schema(schema)
 	end
 
 	local template = etlua.compile([[
-local dir = debug.getinfo(1, "S").source:match("@?(.*/)")
-local primitives = dofile(dir .. "_primitives.lua")
+local primitives = require("<%- require_path -%>._primitives")
 
 <%- schema_description -%>
 --- @class <%- schema_name %>
@@ -159,6 +159,7 @@ return <%- schema_name %>
 		command_names = command_names,
 		serializer = ser.serialize_schema(schema),
 		deserializer = de.deserialize_schema(schema),
+		require_path = require_path,
 	})
 
 	return output
@@ -166,8 +167,9 @@ end
 
 --- @param schema Schema
 --- @param folder string
-function generate.build_schema(schema, folder)
-	local code = generate.generate_schema(schema)
+--- @param require_path string
+function generate.build_schema(schema, folder, require_path)
+	local code = generate.generate_schema(schema, require_path)
 	local file = io.open(folder .. "/" .. casing.snake(schema.name) .. ".lua", "w")
 	if file then
 		file:write(code)

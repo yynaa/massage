@@ -7,7 +7,7 @@ export function serialize_command(
   command: Command,
 ): OptionalKind<MethodDeclarationStructure> {
   return {
-    name: "serialize",
+    name: "_serialize",
     returnType: "Uint8Array",
     statements: [
       `let bytes: number[] = [${command.id}]`,

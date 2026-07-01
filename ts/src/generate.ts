@@ -51,9 +51,9 @@ export async function generate_schema(
     ],
     methods: [
       {
-        name: "serialize",
+        name: "_serialize",
         returnType: "Uint8Array",
-        statements: [`return this.command.serialize()`],
+        statements: [`return this.command._serialize()`],
       },
       {
         name: "deserialize",
@@ -81,7 +81,7 @@ export async function generate_schema(
   });
 
   for (const [name, command] of Object.entries(schema.commands)) {
-    generate_command(sourceFile, name, command);
+    generate_command(sourceFile, schema, name, command);
   }
 
   await sourceFile.save();
@@ -98,6 +98,7 @@ export async function generate_schema(
 
 export function generate_command(
   sourceFile: SourceFile,
+  schema: Schema,
   name: string,
   command: Command,
 ) {
@@ -126,6 +127,11 @@ export function generate_command(
       },
     ],
     methods: [
+      {
+        name: "_wrap",
+        returnType: `${pascalCase(schema.name)}`,
+        statements: [`return new ${pascalCase(schema.name)}(this)`],
+      },
       serialize_command(name, command),
       deserialize_command(name, command),
     ],
