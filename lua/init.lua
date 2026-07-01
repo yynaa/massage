@@ -15,7 +15,7 @@ massage.build_schema = generate.build_schema
 
 massage._AUTHORS = "yyna [yyna.xyz]"
 massage._SOURCE = "https://github.com/yynaa/massage"
-massage._VERSION = "0.2.0"
-massage._CHANGETAG = "0.25.07.1"
+massage._VERSION = "0.3.0"
+massage._CHANGETAG = "0.25.07.2"
 
 return massage
